@@ -1,0 +1,37 @@
+# Render blueprint — Research Copilot
+# https://render.com/docs/blueprint-spec
+#
+# Free-tier deploy: web service on Render (free, sleeps after 15min idle),
+# Postgres on Supabase (free, always-on, pgvector pre-installed).
+#
+# Pair with FREE_DEPLOY.md for the manual setup steps.
+
+services:
+  - type: web
+    name: research-copilot
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    branch: main
+    healthCheckPath: /up
+    autoDeploy: true
+    envVars:
+      # Set these manually in the Render dashboard (sync: false = secret).
+      - key: DATABASE_URL
+        sync: false              # paste Supabase session-pooler URL here
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: RAILS_MASTER_KEY
+        sync: false              # cat config/master.key locally and paste
+      # Defaults that don't need to change.
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_LOG_TO_STDOUT
+        value: "true"
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      - key: WEB_CONCURRENCY
+        value: "1"
+      - key: RAILS_MAX_THREADS
+        value: "3"
