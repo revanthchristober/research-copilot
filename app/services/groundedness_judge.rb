@@ -1,5 +1,5 @@
 class GroundednessJudge
-  JUDGE_MODEL = "gpt-4o-mini"
+  JUDGE_MODEL = ENV.fetch("LLM_CHEAP_MODEL", "gpt-5-mini")
 
   JUDGE_SCHEMA = {
     name: "groundedness_verdict",

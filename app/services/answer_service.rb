@@ -1,6 +1,6 @@
 class AnswerService
   RETRIEVAL_K = 8
-  MODEL = "gpt-4o-2024-08-06"
+  MODEL = ENV.fetch("LLM_GENERATION_MODEL", "gpt-5")
 
   ANSWER_SCHEMA = {
     name: "research_answer",

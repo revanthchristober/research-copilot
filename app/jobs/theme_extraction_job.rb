@@ -1,7 +1,7 @@
 class ThemeExtractionJob < ApplicationJob
   queue_as :default
 
-  EXTRACT_MODEL = "gpt-4o-2024-08-06"
+  EXTRACT_MODEL = ENV.fetch("LLM_GENERATION_MODEL", "gpt-5")
 
   THEMES_SCHEMA = {
     name: "research_themes",
