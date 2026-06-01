@@ -46,8 +46,10 @@ Rails.application.configure do
   # Don't log any deprecations.
   config.active_support.report_deprecations = false
 
-  # Single-DB free-tier deploy: solid_cache/queue/cable need their own DBs which
-  # we don't have on Supabase free. Use in-process adapters instead.
+  # Supabase free tier = one Postgres. The cache/queue/cable connections in
+  # database.yml point at the same URL just so the SolidCache::Record / SolidQueue::Record
+  # classes can resolve at eager-load — but the runtime adapters below are in-process,
+  # so the solid_* tables never need to exist.
   config.cache_store = :memory_store
   config.active_job.queue_adapter = :async
 

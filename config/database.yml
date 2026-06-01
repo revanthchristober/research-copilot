@@ -79,5 +79,19 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  <<: *default
-  url: <%= ENV["DATABASE_URL"] %>
+  primary: &primary_production
+    <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
+  # cache/queue/cable connections exist so SolidCache::Record / SolidQueue::Record /
+  # SolidCable::Record can resolve at eager-load. They point at the same Supabase DB.
+  # `database_tasks: false` tells db:prepare to skip migrating them — our runtime
+  # adapters (memory_store / :async / async) don't actually need their tables.
+  cache:
+    <<: *primary_production
+    database_tasks: false
+  queue:
+    <<: *primary_production
+    database_tasks: false
+  cable:
+    <<: *primary_production
+    database_tasks: false
