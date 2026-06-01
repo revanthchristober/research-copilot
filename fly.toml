@@ -1,0 +1,37 @@
+# fly.toml — Research Copilot
+# https://fly.io/docs/reference/configuration/
+
+app = "research-copilot"  # change to a unique name when you run `fly launch`
+primary_region = "iad"     # US East — change to closer region if needed
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  # Rails sees these in production. Secrets (API keys, DATABASE_URL) live in `fly secrets`.
+  RAILS_LOG_TO_STDOUT = "true"
+  RAILS_SERVE_STATIC_FILES = "true"
+  WEB_CONCURRENCY = "2"
+  RAILS_MAX_THREADS = "3"
+
+[deploy]
+  release_command = "bin/rails db:prepare"
+
+[http_service]
+  internal_port = 80
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"
+  cpu_kind = "shared"
+  cpus = 1

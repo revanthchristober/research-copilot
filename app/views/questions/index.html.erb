@@ -1,0 +1,35 @@
+<% content_for :title, "Ask" %>
+
+<div class="mb-6">
+  <h1 class="text-2xl font-semibold tracking-tight">Ask your research</h1>
+  <p class="text-sm text-slate-500 mt-1">Get evidence-backed answers from your ingested interviews. Every claim comes with citations.</p>
+</div>
+
+<%= form_with model: Question.new, url: questions_path, local: true, class: "bg-white border border-slate-200 rounded-lg p-5 mb-8" do |f| %>
+  <%= f.label :body, "Research question", class: "block text-sm font-medium text-slate-700 mb-1" %>
+  <%= f.text_area :body, rows: 3, required: true,
+        placeholder: "e.g. What are the top 3 onboarding pain points across all interviews?",
+        class: "w-full rounded-md border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 text-sm" %>
+  <div class="mt-3 flex items-center justify-between">
+    <p class="text-xs text-slate-500">Powered by gpt-4o · grounded in your interview corpus</p>
+    <%= f.submit "Ask →",
+          class: "inline-flex items-center px-4 py-2 rounded-md bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 cursor-pointer" %>
+  </div>
+<% end %>
+
+<% if @questions.any? %>
+  <h2 class="text-sm font-medium text-slate-500 mb-3 uppercase tracking-wide">Recent questions</h2>
+  <ul class="space-y-2">
+    <% @questions.each do |q| %>
+      <li class="bg-white border border-slate-200 rounded-md p-4 hover:border-slate-300">
+        <%= link_to q.body, question_path(q), class: "font-medium text-slate-900 hover:text-emerald-700 block" %>
+        <p class="text-xs text-slate-500 mt-1">
+          <%= time_ago_in_words(q.asked_at) %> ago
+          <% if q.latest_answer %>
+            · <%= pluralize(q.latest_answer.citations.length, "citation") %>
+          <% end %>
+        </p>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

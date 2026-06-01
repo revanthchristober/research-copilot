@@ -1,0 +1,62 @@
+---
+# Golden evaluation set for Research Copilot
+#
+# Each entry:
+#   question         — the research question to ask
+#   expected_snippets — verbatim substrings that should appear in the retrieved
+#                       chunks (top-k=5). Hit-rate@5 = fraction of questions
+#                       where ≥1 expected snippet is in the top-5 retrieved.
+#                       For more demanding questions, list multiple snippets;
+#                       the question hits as long as ANY of them shows up.
+
+- question: "What made the bank connection step difficult for users?"
+  expected_snippets:
+    - "bank-connection step was the most confusing"
+    - "wasn't sure if it was secure"
+
+- question: "Why did some users feel overwhelmed during signup?"
+  expected_snippets:
+    - "seven different permissions in a row without explaining why"
+    - "connect my CRM, my Slack, and my data warehouse"
+
+- question: "What did users suggest would have made onboarding easier?"
+  expected_snippets:
+    - "clearer explanation up front"
+    - "demo workspace with sample data"
+    - "help video"
+
+- question: "Did any users almost abandon the product during onboarding?"
+  expected_snippets:
+    - "I almost dropped off there"
+    - "I closed the tab"
+    - "almost quit right there"
+
+- question: "What did the Beta Health user say about the dashboard after signup?"
+  expected_snippets:
+    - "dropped me into a dashboard"
+    - "no tour, no checklist"
+
+- question: "How did the Crate trial signup feel to the user?"
+  expected_snippets:
+    - "trial signup"
+    - "It was rough"
+    - "connect my CRM"
+
+- question: "Did users mention security concerns during signup?"
+  expected_snippets:
+    - "wasn't sure if it was secure"
+
+- question: "What did Hassan want instead of being forced to connect integrations?"
+  expected_snippets:
+    - "demo workspace with sample data"
+    - "poke around the product first"
+
+- question: "Did users come back to the product after initially closing it?"
+  expected_snippets:
+    - "Came back the next day"
+    - "Came back the next morning"
+
+- question: "What made the Crate trial feel like a long implementation instead of a quick try?"
+  expected_snippets:
+    - "six week implementation"
+    - "free trial is to try the product fast"

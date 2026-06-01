@@ -1,0 +1,61 @@
+<% content_for :title, "Search: #{@query}" %>
+
+<% if @query.strip.empty? %>
+  <div class="border border-dashed border-slate-300 rounded-lg p-12 text-center text-slate-500">
+    <p>Type a query in the search box above to find quotes across your interviews.</p>
+    <p class="text-xs mt-2">Example: <em>"onboarding confusion"</em>, <em>"pricing surprise"</em>, <em>"navigation problems"</em></p>
+  </div>
+<% else %>
+  <div class="mb-6 flex items-baseline justify-between flex-wrap gap-2">
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight">
+        Results for <span class="text-emerald-700">&ldquo;<%= @query %>&rdquo;</span>
+      </h1>
+      <p class="text-xs text-slate-500 mt-1">
+        <%= pluralize(@results.length, "result") %>
+        <% if @timing %> &middot; retrieved in <%= @timing %>ms<% end %>
+        <% if @rerank %> &middot; reranked with gpt-4o-mini<% end %>
+      </p>
+    </div>
+    <%= link_to (@rerank ? "Disable rerank" : "Enable rerank →"),
+          search_path(q: @query, rerank: !@rerank),
+          class: "text-xs text-slate-500 hover:text-slate-900 underline" %>
+  </div>
+
+  <% if @results.empty? %>
+    <div class="border border-dashed border-slate-300 rounded-lg p-12 text-center text-slate-500">
+      <p>No matches found. Try a shorter or different phrase.</p>
+    </div>
+  <% else %>
+    <ol class="space-y-3">
+      <% @results.each_with_index do |result, i| %>
+        <li class="bg-white border border-slate-200 rounded-lg p-4 hover:border-slate-300 transition">
+          <div class="flex items-center justify-between gap-3 text-xs text-slate-500 mb-2">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="font-mono text-slate-400 shrink-0">#<%= i + 1 %></span>
+              <%= link_to result.transcript_title, transcript_path(result.transcript),
+                    class: "text-emerald-700 hover:text-emerald-800 font-medium truncate" %>
+              <% if result.speaker %>
+                <span class="text-slate-400">·</span>
+                <span><%= result.speaker %></span>
+              <% end %>
+              <% if result.display_timestamp %>
+                <span class="text-slate-400">·</span>
+                <span><%= result.display_timestamp %></span>
+              <% end %>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <% if @rerank && result.rerank_score %>
+                <span class="text-slate-500"><%= (result.rerank_score * 100).round %></span>
+              <% else %>
+                <span class="text-slate-500"><%= (result.similarity * 100).round %>%</span>
+              <% end %>
+              <%= similarity_bar(result.score) %>
+            </div>
+          </div>
+          <p class="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap"><%= highlight_query(result.text, @query) %></p>
+        </li>
+      <% end %>
+    </ol>
+  <% end %>
+<% end %>

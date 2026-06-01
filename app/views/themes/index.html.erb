@@ -1,0 +1,59 @@
+<% content_for :title, "Themes" %>
+
+<div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+  <div>
+    <h1 class="text-2xl font-semibold tracking-tight">Themes</h1>
+    <p class="text-sm text-slate-500 mt-1">Auto-extracted patterns across <%= Chunk.embedded.count %> chunks in <%= Transcript.count %> interviews.</p>
+  </div>
+  <%= button_to "Re-extract themes →", themes_path, method: :post,
+        class: "inline-flex items-center px-3 py-1.5 rounded-md border border-slate-300 bg-white text-slate-700 text-xs font-medium hover:bg-slate-50",
+        data: { turbo_confirm: "Run gpt-4o to re-cluster themes? (~10s)" } %>
+</div>
+
+<% if @themes.empty? %>
+  <div class="border border-dashed border-slate-300 rounded-lg p-12 text-center text-slate-500">
+    <p>No themes extracted yet.</p>
+    <p class="text-xs mt-2">Click "Re-extract themes" above to cluster recurring pain points across your interviews.</p>
+  </div>
+<% else %>
+  <ul class="space-y-3">
+    <% @themes.each do |theme| %>
+      <li class="bg-white border border-slate-200 rounded-lg p-5">
+        <div class="flex items-start justify-between gap-4 mb-2">
+          <h2 class="text-base font-semibold text-slate-900 leading-snug"><%= theme.label %></h2>
+          <div class="flex items-center gap-3 shrink-0 text-xs">
+            <span class="text-slate-500"><%= pluralize(theme.evidence_count, "quote") %></span>
+            <% if theme.confidence %>
+              <%
+                pct = (theme.confidence * 100).round
+                color = pct >= 80 ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+                        pct >= 50 ? "bg-amber-50 text-amber-700 border-amber-200" :
+                                    "bg-slate-50 text-slate-600 border-slate-200"
+              %>
+              <span class="border rounded-full px-2 py-0.5 font-medium <%= color %>"><%= pct %>% conf</span>
+            <% end %>
+          </div>
+        </div>
+        <p class="text-sm text-slate-700 leading-relaxed mb-3"><%= theme.summary %></p>
+        <% if theme.supporting_chunks.any? %>
+          <details class="text-xs">
+            <summary class="cursor-pointer text-slate-500 hover:text-slate-700">Show supporting quotes (<%= theme.supporting_chunk_ids.length %>)</summary>
+            <ul class="mt-3 space-y-2">
+              <% theme.supporting_chunks.includes(:transcript).each do |chunk| %>
+                <li class="pl-3 border-l-2 border-slate-200">
+                  <p class="text-slate-700"><%= chunk.text.gsub(/\s+/, " ")[0..200] %><% if chunk.text.length > 200 %>…<% end %></p>
+                  <%= link_to chunk.transcript.title, transcript_path(chunk.transcript),
+                        class: "text-emerald-700 hover:text-emerald-800 text-xs" %>
+                  <% if chunk.speaker %>
+                    <span class="text-slate-400">·</span>
+                    <span class="text-slate-500"><%= chunk.speaker %></span>
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+          </details>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

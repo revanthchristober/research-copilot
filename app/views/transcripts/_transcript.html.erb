@@ -1,0 +1,37 @@
+<%= turbo_stream_from transcript %>
+
+<div id="<%= dom_id(transcript) %>" class="bg-white border border-slate-200 rounded-lg p-5 hover:border-slate-300 transition">
+  <div class="flex items-start justify-between gap-4">
+    <div class="min-w-0 flex-1">
+      <%= link_to transcript.title, transcript, class: "font-medium text-slate-900 hover:text-emerald-700 truncate block" %>
+      <div class="mt-1 flex items-center gap-3 text-xs text-slate-500">
+        <span>
+          <% case transcript.status %>
+          <% when "pending" %>
+            <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> pending</span>
+          <% when "ingesting" %>
+            <span class="inline-flex items-center gap-1 text-amber-700"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> ingesting</span>
+          <% when "embedded" %>
+            <span class="inline-flex items-center gap-1 text-emerald-700"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> embedded</span>
+          <% when "failed" %>
+            <span class="inline-flex items-center gap-1 text-rose-700"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> failed</span>
+          <% end %>
+        </span>
+        <span>&middot;</span>
+        <span><%= transcript.chunks.count %> chunks</span>
+        <% if transcript.chunks.any? %>
+          <span>&middot;</span>
+          <span><%= transcript.embedding_progress %>% embedded</span>
+        <% end %>
+      </div>
+    </div>
+
+    <% if transcript.chunks.any? && transcript.embedding_progress < 100 %>
+      <div class="w-32 shrink-0">
+        <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full bg-emerald-500 transition-all" style="width: <%= transcript.embedding_progress %>%"></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

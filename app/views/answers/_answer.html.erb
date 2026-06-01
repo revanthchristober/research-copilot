@@ -1,0 +1,64 @@
+<%= turbo_frame_tag "answer_#{question.id}" do %>
+  <article class="bg-white border border-slate-200 rounded-lg p-5">
+    <div class="flex items-center justify-between mb-3 gap-3 flex-wrap">
+      <p class="text-xs text-slate-500 uppercase tracking-wide">Answer</p>
+      <div class="flex items-center gap-3 text-xs">
+        <% if answer.groundedness_score %>
+          <%
+            score = answer.groundedness_score
+            band  = score >= 85 ? :high : score >= 65 ? :mid : :low
+            color = { high: "bg-emerald-50 text-emerald-800 border-emerald-200",
+                      mid:  "bg-amber-50 text-amber-800 border-amber-200",
+                      low:  "bg-rose-50 text-rose-800 border-rose-200" }[band]
+          %>
+          <span class="inline-flex items-center gap-1.5 border rounded-full px-2.5 py-0.5 font-medium <%= color %>"
+                title="<%= JSON.parse(answer.judge_notes || '{}')['reasoning'] rescue '' %>">
+            <svg class="w-3 h-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.7-9.3-4 4a1 1 0 0 1-1.4 0l-2-2a1 1 0 1 1 1.4-1.4L9 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4Z" clip-rule="evenodd"/></svg>
+            Groundedness: <%= score %>/100
+          </span>
+        <% end %>
+        <span class="text-slate-400">model: <%= answer.model_used %></span>
+      </div>
+    </div>
+
+    <%
+      # Convert [N] markers in the answer body into clickable superscript anchors.
+      rendered = h(answer.body).gsub(/\[(\d+)\]/) { |_|
+        n = Regexp.last_match(1).to_i
+        %(<a href="#cite-#{n}" class="text-emerald-600 hover:text-emerald-800 align-super text-xs font-medium no-underline" data-turbo="false">[#{n}]</a>)
+      }.html_safe
+    %>
+    <p class="text-base text-slate-800 leading-relaxed whitespace-pre-wrap"><%= rendered %></p>
+
+    <% if answer.citations.any? %>
+      <div class="mt-6 pt-5 border-t border-slate-100">
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-3">Sources (<%= answer.citations.length %>)</p>
+        <ol class="space-y-3">
+          <% answer.citations.each_with_index do |cite, i| %>
+            <% chunk = Chunk.find_by(id: cite["chunk_id"]) %>
+            <li id="cite-<%= i + 1 %>" class="flex gap-3 text-sm">
+              <span class="font-mono text-xs text-slate-400 shrink-0 mt-0.5">[<%= i + 1 %>]</span>
+              <div class="min-w-0 flex-1">
+                <% if chunk %>
+                  <%= link_to chunk.transcript.title, transcript_path(chunk.transcript),
+                        class: "text-emerald-700 hover:text-emerald-800 font-medium" %>
+                  <% if chunk.speaker || chunk.display_timestamp %>
+                    <span class="text-slate-400">·</span>
+                    <span class="text-xs text-slate-500"><%= [ chunk.speaker, chunk.display_timestamp ].compact.join(" @ ") %></span>
+                  <% end %>
+                <% else %>
+                  <span class="text-slate-500 italic">chunk no longer available</span>
+                <% end %>
+                <blockquote class="mt-1 pl-3 border-l-2 border-amber-300 text-slate-700 italic">
+                  &ldquo;<%= cite["quote"] %>&rdquo;
+                </blockquote>
+              </div>
+            </li>
+          <% end %>
+        </ol>
+      </div>
+    <% else %>
+      <p class="text-xs text-slate-500 mt-4 italic">No citations were attached to this answer.</p>
+    <% end %>
+  </article>
+<% end %>

@@ -1,0 +1,32 @@
+<% content_for :title, @transcript.title %>
+
+<%= turbo_stream_from @transcript %>
+
+<div class="mb-6">
+  <%= link_to "← All transcripts", transcripts_path, class: "text-sm text-slate-500 hover:text-slate-700" %>
+  <h1 class="text-2xl font-semibold tracking-tight mt-2"><%= @transcript.title %></h1>
+  <div class="mt-1 text-xs text-slate-500">
+    <%= @transcript.chunks.count %> chunks &middot; <%= @transcript.embedding_progress %>% embedded &middot; status: <%= @transcript.status %>
+  </div>
+</div>
+
+<div id="<%= dom_id(@transcript) %>" class="hidden"></div>
+
+<section class="space-y-2">
+  <% @transcript.chunks.order(:position).each do |chunk| %>
+    <div class="bg-white border border-slate-200 rounded-md p-4">
+      <div class="flex items-center gap-3 text-xs text-slate-500 mb-1">
+        <span class="font-medium text-slate-700"><%= chunk.speaker || "—" %></span>
+        <% if chunk.display_timestamp %><span><%= chunk.display_timestamp %></span><% end %>
+        <span class="ml-auto inline-flex items-center gap-1">
+          <% if chunk.embedding %>
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> embedded
+          <% else %>
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span> pending
+          <% end %>
+        </span>
+      </div>
+      <p class="text-sm text-slate-800 whitespace-pre-wrap"><%= chunk.text %></p>
+    </div>
+  <% end %>
+</section>

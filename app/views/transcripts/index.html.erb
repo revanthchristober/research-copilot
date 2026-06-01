@@ -1,0 +1,18 @@
+<% content_for :title, "Transcripts" %>
+
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-semibold tracking-tight">Transcripts</h1>
+  <%= link_to "+ New transcript", new_transcript_path,
+        class: "inline-flex items-center px-4 py-2 rounded-md bg-slate-900 text-white text-sm font-medium hover:bg-slate-800" %>
+</div>
+
+<% if @transcripts.empty? %>
+  <div class="border border-dashed border-slate-300 rounded-lg p-12 text-center text-slate-500">
+    <p class="mb-2">No transcripts yet.</p>
+    <%= link_to "Paste your first one →", new_transcript_path, class: "text-emerald-600 hover:text-emerald-700 font-medium" %>
+  </div>
+<% else %>
+  <div class="space-y-3">
+    <%= render @transcripts %>
+  </div>
+<% end %>

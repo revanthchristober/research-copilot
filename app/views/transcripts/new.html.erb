@@ -1,0 +1,36 @@
+<% content_for :title, "New transcript" %>
+
+<div class="mb-6">
+  <%= link_to "← Back", transcripts_path, class: "text-sm text-slate-500 hover:text-slate-700" %>
+  <h1 class="text-2xl font-semibold tracking-tight mt-2">Paste a transcript</h1>
+  <p class="text-sm text-slate-500 mt-1">
+    Plain text, VTT, or SRT. Speaker lines like <code class="bg-slate-100 px-1.5 py-0.5 rounded text-xs">Jane:&nbsp;...</code> are detected automatically.
+  </p>
+</div>
+
+<%= form_with model: @transcript, local: true, class: "space-y-4 bg-white border border-slate-200 rounded-lg p-6" do |f| %>
+  <% if @transcript.errors.any? %>
+    <div class="rounded-md bg-rose-50 border border-rose-200 text-rose-800 px-4 py-2 text-sm">
+      <%= @transcript.errors.full_messages.to_sentence %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :title, class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.text_field :title, required: true, placeholder: "e.g. Acme onboarding interview — Alex (P1)",
+          class: "w-full rounded-md border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 text-sm" %>
+  </div>
+
+  <div>
+    <%= f.label :raw_text, "Transcript", class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.text_area :raw_text, rows: 16, required: true,
+          placeholder: "Jane: Walk me through the first time you set up an account.\nAlex: Honestly the bank-connection step was the most confusing...",
+          class: "w-full rounded-md border-slate-300 focus:border-emerald-500 focus:ring-emerald-500 text-sm font-mono" %>
+  </div>
+
+  <div class="flex items-center justify-end gap-3 pt-2">
+    <%= link_to "Cancel", transcripts_path, class: "text-sm text-slate-500 hover:text-slate-700" %>
+    <%= f.submit "Ingest →",
+          class: "inline-flex items-center px-4 py-2 rounded-md bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 cursor-pointer" %>
+  </div>
+<% end %>
