@@ -59,7 +59,7 @@ group :development do
 end
 
 
-gem "neighbor", "~> 1.1"
+gem "neighbor", "~> 1.2"
 gem "anthropic", "~> 1.44"
 gem "ruby-openai", "~> 8.3"
 gem "dotenv-rails", "~> 3.2"
