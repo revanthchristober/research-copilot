@@ -72,7 +72,7 @@ GEM
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
-    anthropic (1.44.0)
+    anthropic (1.47.0)
       cgi
       connection_pool
       standardwebhooks
@@ -398,7 +398,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  anthropic (~> 1.44)
+  anthropic (~> 1.47)
   aws-sdk-s3 (~> 1.224)
   bootsnap
   brakeman
