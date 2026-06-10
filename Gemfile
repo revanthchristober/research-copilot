@@ -60,7 +60,7 @@ end
 
 
 gem "neighbor", "~> 1.1"
-gem "anthropic", "~> 1.44"
+gem "anthropic", "~> 1.48"
 gem "ruby-openai", "~> 8.3"
 gem "dotenv-rails", "~> 3.2"
 gem "aws-sdk-s3", "~> 1.224"
